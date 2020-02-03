@@ -1,7 +1,30 @@
 <html>
 <body>
-<div>
-    {{info}}
-</div>
+    <div>
+        <h1>Message List</h1>
+    </div>
+    <div>
+        <h2>Add</h2>
+    </div>
+    <div>
+        <form method="post">
+            <input type="text" name="text" placeholder="Enter message"/>
+            <input type="text" name="tag" placeholder="Tag">
+            <button type="submit">Add</button>
+        </form>
+    </div>
+    <div><h2>Filter</h2></div>
+    <form method="post" action="filter">
+        <input type="text" name="filter" placeholder="Filter by Tag">
+        <button type="submit">Find</button>
+    </form>
+    <div><h2>Messages</h2></div>
+    {{#messages}}
+        <div>
+            <b>{{id}}</b>
+            <span>{{text}}</span>
+            <i>{{tag}}</i>
+        </div>
+    {{/messages}}
 </body>
 </html>

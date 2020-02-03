@@ -1,14 +1,22 @@
 package by.anignatiev.spring;
 
+import by.anignatiev.spring.domain.Message;
+import by.anignatiev.spring.repos.MessageRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
+
+import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 
 @Controller
 public class GreetingController {
+    @Autowired
+    private MessageRepo messageRepo;
 
     @GetMapping("/greeting")
     public String greeting(
@@ -21,7 +29,32 @@ public class GreetingController {
 
     @GetMapping
     public String main(Map<String, Object> model) {
-        model.put("info", "Hi there. This is the Spring Boot application.");
+        Iterable<Message> messages = messageRepo.findAll();
+        model.put("messages", messages);
+        return "main";
+    }
+
+    @PostMapping
+    public String add(@RequestParam String text, @RequestParam String tag, Map<String, Object> model) {
+        Message message = new Message(text, tag);
+        messageRepo.save(message);
+
+        Iterable<Message> messages = messageRepo.findAll();
+        model.put("messages", messages);
+
+        return "main";
+    }
+
+    @PostMapping("filter")
+    public String filter(@RequestParam String filter, Map<String, Object> model) {
+        Iterable<Message> messages;
+        if (filter == null || filter.isEmpty()) {
+            messages = messageRepo.findAll();
+        } else {
+            messages = messageRepo.findByTag(filter);
+        }
+        model.put("messages", messages);
+
         return "main";
     }
 }
